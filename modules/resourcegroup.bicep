@@ -1,7 +1,7 @@
 // =========== main.bicep ===========
 targetScope = 'subscription'
 
-@description('Resource group Name')
+@description('Resource Group Name')
 param rgName string
 
 @description('Location Name')
