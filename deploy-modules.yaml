@@ -35,7 +35,7 @@ jobs:
         $firstCommit = $changes.value[$changes.count-1].id
         Write-Host 'First commit: '$firstCommit
         # Go back to the commit before the first change
-        $git_event_before = git rev-parse $firstCommit^
+        $git_event_before = git rev-parse $firstCommit^ --
       }
       
       Write-Host "##vso[task.setvariable variable=GIT_EVENT_BEFORE]$git_event_before"
