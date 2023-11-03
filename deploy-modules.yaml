@@ -34,7 +34,7 @@ jobs:
       if ($changes.count -gt 0) {
         $firstCommit = $changes.value[$changes.count-1].id
         # Go back to the commit before the first change
-        $git_event_before = git rev-parse $firstCommit~1 --
+        $git_event_before = git rev-parse HEAD^
         Write-Host 'First commit: '$firstCommit
       }
       
