@@ -15,7 +15,7 @@ variables:
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   modulePrefix: 'bicep/'
   registryName: inframodules
-  azureSubscription: 
+  azureSubscription: 'Pay-As-You-Go (TMI Dev/Test) (855cfd52-2f2f-4a84-b698-8d8a995bd70f)'
  
 jobs:
 - job: modules
@@ -28,6 +28,7 @@ jobs:
       Write-Host $git_event_before 
       $uri = "$env:SYSTEM_TEAMFOUNDATIONSERVERURI$env:SYSTEM_TEAMPROJECT/_apis/build/builds/$($env:BUILD_BUILDID)/changes?api-version=6.1"
       Write-Host $uri
+      Write-Host 'Env token: ' $env:SYSTEM_ACCESSTOKEN
       $changes = Invoke-RestMethod -Method Get -Headers @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" } -Uri $uri -Verbose
       if ($changes.count -gt 0) {
         $firstCommit = $changes.value[$changes.count-1].id
