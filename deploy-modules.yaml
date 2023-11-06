@@ -23,22 +23,27 @@ jobs:
   condition: eq(variables.isMain, 'true')
 
   steps:
-  - pwsh: |
-      $git_event_before = $env:BUILD_BUILDSOURCEVERSION
-      Write-Host 'git event before :' $git_event_before 
-      $uri = "$env:SYSTEM_TEAMFOUNDATIONSERVERURI$env:SYSTEM_TEAMPROJECT/_apis/build/builds/$($env:BUILD_BUILDID)/changes?api-version=6.1"
-      Write-Host $uri
-      Write-Host 'Env token: ' $env:SYSTEM_ACCESSTOKEN
-      $changes = Invoke-RestMethod -Method Get -Headers @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" } -Uri $uri -Verbose
-      Write-Host 'Changes: '$changes
-      if ($changes.count -gt 0) {
-        $firstCommit = $changes.value[$changes.count-1].id
-        # Go back to the commit before the first change
-        $git_event_before = git rev-parse HEAD^
-        Write-Host 'First commit: '$firstCommit
-      }
-      
-      Write-Host "##vso[task.setvariable variable=GIT_EVENT_BEFORE]$git_event_before"
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: $(azureSubscription)
+      scriptType: 'pscore'
+      scriptLocation: inlineScript
+      inlineScript: |
+        $git_event_before = $env:BUILD_BUILDSOURCEVERSION
+        Write-Host 'git event before :' $git_event_before 
+        $uri = "$env:SYSTEM_TEAMFOUNDATIONSERVERURI$env:SYSTEM_TEAMPROJECT/_apis/build/builds/$($env:BUILD_BUILDID)/changes?api-version=6.1"
+        Write-Host $uri
+        Write-Host 'Env token: ' $env:SYSTEM_ACCESSTOKEN
+        $changes = Invoke-RestMethod -Method Get -Headers @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" } -Uri $uri -Verbose
+        Write-Host 'Changes: '$changes
+        if ($changes.count -gt 0) {
+          $firstCommit = $changes.value[$changes.count-1].id
+          # Go back to the commit before the first change
+          $git_event_before = git rev-parse HEAD^
+          Write-Host 'First commit: '$firstCommit
+        }
+        
+        Write-Host "##vso[task.setvariable variable=GIT_EVENT_BEFORE]$git_event_before"
     displayName: 'Get Start Commit Id'
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
