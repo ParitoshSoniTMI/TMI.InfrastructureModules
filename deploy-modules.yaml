@@ -29,21 +29,28 @@ jobs:
     inputs:
       targetType: 'inline'
       script: |
-        $git_event_before = $env:BUILD_BUILDSOURCEVERSION
-        echo 'git event before :' $git_event_before 
-        $uri = "$env:SYSTEM_TEAMFOUNDATIONSERVERURI$env:SYSTEM_TEAMPROJECT/_apis/build/builds/$($env:BUILD_BUILDID)/changes?api-version=6.1"
-        echo $uri
-        echo 'Env token: ' $env:SYSTEM_ACCESSTOKEN
-        $changes = Invoke-RestMethod -Method Get -Headers @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" } -Uri $uri -Verbose
-        echo 'Changes: '$changes
-        if ($changes.count -gt 0) {
-          $firstCommit = $changes.value[$changes.count-1].id
+        git_event_before="$BUILD_BUILDSOURCEVERSION"
+        echo "git event before : $git_event_before"
+
+        uri="$SYSTEM_TEAMFOUNDATIONSERVERURI$SYSTEM_TEAMPROJECT/_apis/build/builds/$BUILD_BUILDID/changes?api-version=6.1"
+        echo "$uri"
+
+        echo "Env token: $SYSTEM_ACCESSTOKEN"
+
+        # Invoke REST API and store response in a variable
+        changes=$(curl -s -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" "$uri")
+        echo "Changes: $changes"
+
+        if [[ $(jq '.count' <<< "$changes") -gt 0 ]]; then
+          firstCommit=$(jq -r '.value[-1].id' <<< "$changes")
           # Go back to the commit before the first change
-          $git_event_before = git rev-parse HEAD^
-          echo 'First commit: '$firstCommit
-        }
-        
-        echo "##vso[task.setvariable variable=GIT_EVENT_BEFORE]$git_event_before"
+          git_event_before=$(git rev-parse HEAD^)
+          echo "First commit: $firstCommit"
+        fi
+
+        # Set the GIT_EVENT_BEFORE variable using the 'echo' command
+        echo "##vso[task.setvariable variable=GIT_EVENT_BEFORE;isOutput=true]$git_event_before"
+
     displayName: 'Get Start Commit Id'
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
