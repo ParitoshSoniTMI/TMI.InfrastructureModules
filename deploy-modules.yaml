@@ -24,12 +24,7 @@ jobs:
 
   steps:
   
-  - task: AzureCLI@2
-    inputs:
-      azureSubscription: $(azureSubscription)
-      scriptType: 'pscore'
-      scriptLocation: inlineScript
-      inlineScript: |
+ 
   - task: Bash@3
     inputs:
       targetType: 'inline'
