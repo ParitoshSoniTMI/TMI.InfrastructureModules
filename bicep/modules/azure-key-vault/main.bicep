@@ -15,6 +15,7 @@ param tenantId string
 @description('List of AccessPolicyEntry which is used when granting additional permissions for other users or managed identities')
 param accessPolicies array = []
 
+
 resource vault 'Microsoft.KeyVault/vaults@2022-07-01' = {
   name: name
   location: location
