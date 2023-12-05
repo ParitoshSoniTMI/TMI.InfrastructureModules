@@ -8,7 +8,6 @@ param tags object
 ])
 
 param sku string = 'standard'
-
 @description('The object ID of a user, service principal or security group in AAD tenant.')
 param userObjectId string
 param tenantId string
