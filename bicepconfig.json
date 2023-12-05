@@ -1,0 +1,10 @@
+{
+  "moduleAliases": {
+    "ts": {},
+    "br": {
+      "tmi-acr": {
+        "registry": "inframodules.azurecr.io"
+      }
+    }
+  }
+}
