@@ -6,6 +6,7 @@ param tags object
   'premium'
   'standard'
 ])
+
 param sku string = 'standard'
 
 @description('The object ID of a user, service principal or security group in AAD tenant.')
