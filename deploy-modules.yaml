@@ -10,7 +10,7 @@ pr: none
 
 pool:
   vmImage: ubuntu-latest
-
+  
 variables:
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   modulePrefix: 'bicep/'
